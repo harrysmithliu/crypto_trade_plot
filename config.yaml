@@ -1,0 +1,19 @@
+# Default configuration for the demo pipeline.
+
+data_source:
+  type: csv
+  csv_path: data/raw/crypto_transactions_30d.csv
+  local_timezone: America/Toronto
+  window_days: 30
+  invalid_ratio_threshold: 0.05
+
+mock_data:
+  enabled: false
+  output_path: data/raw/crypto_transactions_30d.csv
+  days: 30
+  transactions_per_day: 100
+  seed: 42
+
+runtime:
+  output_dir: reports
+  log_level: INFO
