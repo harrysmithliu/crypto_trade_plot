@@ -14,6 +14,20 @@ This project simulates a lightweight daily reporting workflow for crypto payment
 
 The current version is intentionally designed as a demo build, while keeping the data source and pipeline boundaries ready for a future stable daily-run edition.
 
+## Dashboard Preview
+
+![Operations dashboard overview](docs/screenshots/1.png)
+
+This view shows the top half of the operations dashboard, including the Financial and Payment Ops / Fraud sections with card-based interactive charts.
+
+![Expanded single-chart modal](docs/screenshots/2.png)
+
+Each chart card supports an `Expand` action that opens the selected figure in a larger modal for easier inspection and interaction.
+
+![Merchant and system sections](docs/screenshots/3.png)
+
+The lower half of the dashboard highlights Merchant / User concentration and System / Reconciliation monitoring in the same sectioned layout.
+
 ## Project Structure
 
 ```text

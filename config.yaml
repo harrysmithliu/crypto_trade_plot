@@ -27,6 +27,6 @@ anomaly:
   min_baseline_days: 3
 
 report:
-  title: Crypto Trade Daily Report
+  title: Crypto Trade Operations Dashboard
   prefix: Crypto_Trade_Daily_Report
   scatter_max_points:

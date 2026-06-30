@@ -16,14 +16,30 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from scripts.generate_mock_data import generate_mock_data, write_mock_data  # noqa: E402
 
 
-EXPECTED_COLUMNS = [
+REQUIRED_COLUMNS = [
     "tx_id",
+    "order_id",
+    "user_id",
     "timestamp",
     "merchant_id",
+    "merchant_name",
     "crypto_asset",
+    "fiat_currency",
     "fiat_volume_cad",
     "tx_status",
+    "payment_channel",
+    "flat_fee_cad",
+    "spread_income_cad",
+    "flow_direction",
+    "risk_score",
+    "aml_flag",
+    "is_high_risk",
+    "provider_amount_cad",
+    "ledger_amount_cad",
+    "recon_delta_cad",
+    "recon_status",
     "latency_ms",
+    "settlement_latency_min",
 ]
 END_DATE = "2026-06-29"
 
@@ -34,14 +50,32 @@ def mock_data() -> pd.DataFrame:
 
 
 def test_schema_uniqueness_and_value_constraints(mock_data: pd.DataFrame) -> None:
-    assert list(mock_data.columns) == EXPECTED_COLUMNS
+    assert set(REQUIRED_COLUMNS).issubset(mock_data.columns)
     assert len(mock_data) == 3_000
     assert mock_data["tx_id"].is_unique
-    assert mock_data[EXPECTED_COLUMNS].notna().all().all()
+    assert mock_data[
+        [
+            "tx_id",
+            "order_id",
+            "user_id",
+            "timestamp",
+            "merchant_id",
+            "merchant_name",
+            "crypto_asset",
+            "fiat_currency",
+            "fiat_volume_cad",
+            "tx_status",
+            "payment_channel",
+            "flow_direction",
+            "latency_ms",
+        ]
+    ].notna().all().all()
     assert (mock_data["fiat_volume_cad"] >= 0).all()
     assert (mock_data["latency_ms"] >= 0).all()
+    assert (mock_data["risk_score"].between(0, 100)).all()
     assert set(mock_data["crypto_asset"]) == {"USDC", "USDT", "BTC", "ETH"}
     assert set(mock_data["tx_status"]) == {"Completed", "Pending", "Failed"}
+    assert set(mock_data["fiat_currency"]) == {"CAD", "USD"}
 
 
 def test_dataset_has_thirty_complete_local_days(mock_data: pd.DataFrame) -> None:
@@ -99,7 +133,7 @@ def test_csv_output_uses_utc_iso_timestamps(
     loaded = pd.read_csv(output)
 
     assert output.exists()
-    assert list(loaded.columns) == EXPECTED_COLUMNS
+    assert set(REQUIRED_COLUMNS).issubset(loaded.columns)
     assert len(loaded) == 3_000
     assert loaded["timestamp"].str.match(
         r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z"

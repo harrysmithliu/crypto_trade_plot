@@ -40,6 +40,8 @@ def test_csv_source_loads_default_latest_thirty_local_days(tmp_path: Path) -> No
     assert local_dates.min().isoformat() == "2026-05-31"
     assert local_dates.max().isoformat() == "2026-06-29"
     assert loaded.attrs["load_audit"]["analysis_end_date"] == "2026-06-29"
+    assert "payment_channel" in loaded.columns
+    assert "recon_status" in loaded.columns
 
 
 def test_timezone_conversion_handles_dst_boundaries() -> None:

@@ -58,7 +58,7 @@ def test_run_daily_generates_dated_and_latest_reports(tmp_path: Path) -> None:
               min_baseline_days: 3
 
             report:
-              title: Crypto Trade Daily Report
+              title: Crypto Trade Operations Dashboard
               prefix: Crypto_Trade_Daily_Report
               scatter_max_points:
             """
@@ -82,10 +82,12 @@ def test_run_daily_generates_dated_and_latest_reports(tmp_path: Path) -> None:
     assert (output_dir / "Crypto_Trade_Daily_Report_latest.html").exists()
 
     html = (output_dir / "Crypto_Trade_Daily_Report_latest.html").read_text(encoding="utf-8")
-    assert "Daily Settled Volume and Success Rate" in html
-    assert "Completed Order Asset Preference" in html
-    assert "Large Transactions and Processing Latency" in html
-    assert "Anomaly Day Details" in html
+    assert "1. Financial" in html
+    assert "2. Payment Ops / Fraud" in html
+    assert "3. Merchant / User" in html
+    assert "4. System / Reconciliation" in html
+    assert "Daily TTV / TPV Trend" in html
+    assert "Reconciliation Discrepancy Monitor" in html
     assert (log_dir / "run_daily.log").exists()
 
 
@@ -126,7 +128,7 @@ def test_run_daily_fails_cleanly_for_invalid_input(tmp_path: Path) -> None:
               min_baseline_days: 3
 
             report:
-              title: Crypto Trade Daily Report
+              title: Crypto Trade Operations Dashboard
               prefix: Crypto_Trade_Daily_Report
               scatter_max_points:
             """

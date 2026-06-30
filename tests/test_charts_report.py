@@ -80,13 +80,20 @@ def test_render_html_report_includes_required_sections_and_titles() -> None:
         generated_at=pd.Timestamp("2026-06-29 08:00:00", tz="America/Toronto"),
     )
 
-    assert "Crypto Trade Daily Report" in html
+    assert "Crypto Trade Operations Dashboard" in html
     assert "Data Quality Summary" in html
-    assert "Key Metrics" in html
-    assert "Daily Settled Volume and Success Rate" in html
-    assert "Completed Order Asset Preference" in html
-    assert "Large Transactions and Processing Latency" in html
-    assert "Anomaly Day Details" in html
+    assert "Executive KPI Cards" in html
+    assert "1. Financial" in html
+    assert "2. Payment Ops / Fraud" in html
+    assert "3. Merchant / User" in html
+    assert "4. System / Reconciliation" in html
+    assert "Daily TTV / TPV Trend" in html
+    assert "Revenue &amp; Spread Analysis" in html or "Revenue & Spread Analysis" in html
+    assert "Transaction Decline Reason Distribution" in html
+    assert "Top Merchants by Volume &amp; Concentration" in html or "Top Merchants by Volume & Concentration" in html
+    assert "Reconciliation Discrepancy Monitor" in html
+    assert "expand-chart-button" in html
+    assert 'id="chart-modal"' in html
     assert "Plotly.newPlot" in html
 
 

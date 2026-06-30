@@ -22,7 +22,7 @@ REQUIRED_COLUMNS = (
 )
 VALID_ASSETS = frozenset({"USDC", "USDT", "ETH", "BTC"})
 VALID_STATUSES = frozenset({"Completed", "Pending", "Failed"})
-OUTPUT_COLUMNS = [
+BASE_OUTPUT_COLUMNS = [
     "tx_id",
     "timestamp",
     "local_timestamp",
@@ -33,6 +33,24 @@ OUTPUT_COLUMNS = [
     "tx_status",
     "latency_ms",
 ]
+OPTIONAL_TIMESTAMP_COLUMNS = (
+    "order_created_at",
+    "channel_selected_at",
+    "kyc_passed_at",
+    "payment_completed_at",
+    "settled_at",
+)
+OPTIONAL_NUMERIC_COLUMNS = (
+    "flat_fee_cad",
+    "spread_income_cad",
+    "risk_score",
+    "velocity_1h",
+    "provider_amount_cad",
+    "ledger_amount_cad",
+    "recon_delta_cad",
+    "settlement_latency_min",
+)
+OPTIONAL_BOOLEAN_COLUMNS = ("aml_flag", "is_high_risk")
 
 
 class DataContractError(ValueError):
@@ -160,7 +178,7 @@ def clean_transaction_frame(
         missing = ", ".join(missing_columns)
         raise DataContractError(f"Missing required columns: {missing}")
 
-    working = dataframe.loc[:, REQUIRED_COLUMNS].copy()
+    working = dataframe.copy()
     input_rows = len(working)
 
     deduplicated = working.drop_duplicates(subset="tx_id", keep="last").copy()
@@ -185,6 +203,19 @@ def clean_transaction_frame(
     cleaned["local_date"] = cleaned["local_timestamp"].dt.date
     cleaned["latency_ms"] = cleaned["latency_ms"].astype(int)
     cleaned["fiat_volume_cad"] = cleaned["fiat_volume_cad"].astype(float)
+    for column in OPTIONAL_TIMESTAMP_COLUMNS:
+        if column in cleaned.columns:
+            cleaned[column] = pd.to_datetime(cleaned[column], utc=True, errors="coerce")
+    for column in OPTIONAL_NUMERIC_COLUMNS:
+        if column in cleaned.columns:
+            cleaned[column] = pd.to_numeric(cleaned[column], errors="coerce")
+    for column in OPTIONAL_BOOLEAN_COLUMNS:
+        if column in cleaned.columns:
+            cleaned[column] = (
+                cleaned[column]
+                .replace({"True": True, "False": False, "true": True, "false": False})
+                .astype("boolean")
+            )
     cleaned = cleaned.sort_values("timestamp").reset_index(drop=True)
 
     local_end = _normalize_bound(end_at, timezone=local_timezone, is_end=True)
@@ -197,7 +228,12 @@ def clean_transaction_frame(
         local_start = local_end.normalize() - pd.Timedelta(days=window_days - 1)
 
     window_mask = cleaned["local_timestamp"].between(local_start, local_end, inclusive="both")
-    filtered = cleaned.loc[window_mask, OUTPUT_COLUMNS].reset_index(drop=True)
+    passthrough_columns = [
+        column for column in cleaned.columns if column not in BASE_OUTPUT_COLUMNS
+    ]
+    filtered = cleaned.loc[
+        window_mask, BASE_OUTPUT_COLUMNS + passthrough_columns
+    ].reset_index(drop=True)
     if filtered.empty:
         raise DataQualityError("No valid transaction rows remain inside the analysis window")
 
