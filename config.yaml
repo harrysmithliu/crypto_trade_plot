@@ -16,4 +16,17 @@ mock_data:
 
 runtime:
   output_dir: reports
+  log_dir: logs
   log_level: INFO
+
+anomaly:
+  min_terminal_tx: 50
+  absolute_failure_rate_threshold: 10.0
+  relative_failure_multiplier: 3.0
+  baseline_lookback_days: 7
+  min_baseline_days: 3
+
+report:
+  title: Crypto Trade Daily Report
+  prefix: Crypto_Trade_Daily_Report
+  scatter_max_points:

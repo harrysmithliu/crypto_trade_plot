@@ -1,0 +1,5 @@
+numpy>=2.3,<3
+pandas>=2.3,<3
+plotly>=6.8,<7
+PyYAML>=6.0,<7
+pytest>=8.4,<9
