@@ -25,6 +25,7 @@ dist/
 
 # Local requirements document
 docs/crypto_trade_daily_report_requirements.md
+texts/
 
 # Generated runtime outputs
 logs/*
