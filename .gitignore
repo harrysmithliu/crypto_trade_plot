@@ -1,0 +1,38 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Packaging artifacts
+build/
+dist/
+*.egg-info/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+
+# Generated runtime outputs
+logs/*
+!logs/.gitkeep
+reports/*
+!reports/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/
+*.swp
